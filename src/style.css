@@ -27,7 +27,7 @@ body {
   }
   
   .panel.revealed {
-    background-size: 400px 400px;
+    background-size: cover;
     background-repeat: no-repeat;
   }
   
