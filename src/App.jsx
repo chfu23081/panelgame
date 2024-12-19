@@ -46,12 +46,15 @@ const App = () => {
     if (!options.includes(correctBreed)) {
       options.push(correctBreed); // 正解の犬種をリストに追加
     }
-    // ランダムに4つ選択肢を選ぶ（正解を必ず含む）
-    const shuffled = options.sort(() => 0.5 - Math.random());
-    const selectedChoices = [correctBreed, ...shuffled.slice(0, 3)]
-      .sort(() => 0.5 - Math.random());
-    setChoices(selectedChoices);
+    
+    // シャッフルして、重複しない4つの選択肢を選ぶ
+    const uniqueChoices = Array.from(new Set([correctBreed, ...options]))
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4); // 必ず4つ選択する
+    
+    setChoices(uniqueChoices.sort(() => 0.5 - Math.random())); // 再シャッフルして設定
   };
+  
   // 最初のレンダリング時に犬種リストと画像を取得
   useEffect(() => {
     fetchAllBreeds();
