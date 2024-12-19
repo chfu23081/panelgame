@@ -16,23 +16,17 @@ const App = () => {
   const randomDogAPI = "https://dog.ceo/api/breeds/image/random";
   const allBreedsAPI = "https://dog.ceo/api/breeds/list/all";
 
-  // Fetch all breeds
-  const fetchAllBreeds = async () => {
+  // Fetch all breeds and then fetch a random dog image
+  const initializeGame = async () => {
     try {
-      const response = await fetch(allBreedsAPI);
-      const data = await response.json();
-      setAllBreeds(Object.keys(data.message));
-    } catch (error) {
-      console.error("Failed to fetch breed list:", error);
-    }
-  };
+      const breedResponse = await fetch(allBreedsAPI);
+      const breedData = await breedResponse.json();
+      const breeds = Object.keys(breedData.message);
+      setAllBreeds(breeds);
 
-  // Fetch random dog image
-  const fetchRandomDog = async () => {
-    try {
-      const response = await fetch(randomDogAPI);
-      const data = await response.json();
-      const imageUrl = data.message;
+      const dogResponse = await fetch(randomDogAPI);
+      const dogData = await dogResponse.json();
+      const imageUrl = dogData.message;
       setImageURL(imageUrl);
 
       // Extract breed from image URL
@@ -40,14 +34,14 @@ const App = () => {
       setCorrectBreed(breed);
 
       // Generate options
-      generateChoices(breed);
+      generateChoices(breed, breeds);
     } catch (error) {
-      console.error("Failed to fetch random dog image:", error);
+      console.error("Failed to initialize the game:", error);
     }
   };
 
   // Generate choices including the correct breed
-  const generateChoices = (correctBreed) => {
+  const generateChoices = (correctBreed, allBreeds) => {
     const shuffledBreeds = [...allBreeds]
       .filter((breed) => breed !== correctBreed)
       .sort(() => 0.5 - Math.random())
@@ -72,13 +66,12 @@ const App = () => {
     setRevealedPanels([]);
     setSelectedAnswer("");
     setIsCorrect(null);
-    fetchRandomDog();
+    initializeGame();
   };
 
-  // Fetch breeds and a random dog image on initial render
+  // Initialize the game on first render
   useEffect(() => {
-    fetchAllBreeds();
-    fetchRandomDog();
+    initializeGame();
   }, []);
 
   return (
@@ -132,6 +125,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
