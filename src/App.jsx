@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./style.css";
 const App = () => {
   const gridSize = 4; // グリッドのサイズ（4×4）
+  const maxReveals = 4; // 最大でめくれるパネルの数
   const [imageURL, setImageURL] = useState(""); // 背景画像URL
   const [revealedPanels, setRevealedPanels] = useState([]); // 表示されているパネルの管理
   const [guess, setGuess] = useState(""); // ユーザーの答え
@@ -22,7 +23,7 @@ const App = () => {
   }, []);
   // パネルをクリックした時の処理
   const handlePanelClick = (index) => {
-    if (!revealedPanels.includes(index)) {
+    if (revealedPanels.length < maxReveals && !revealedPanels.includes(index)) {
       setRevealedPanels([...revealedPanels, index]); // クリックしたパネルを表示リストに追加
     }
   };
@@ -63,10 +64,12 @@ const App = () => {
       {isCorrect !== null && (
         <p>{isCorrect ? "正解です！" : "不正解です。もう一度挑戦してね！"}</p>
       )}
+      <p>めくれるパネルは最大 {maxReveals} 枚です。</p>
     </div>
   );
 };
 export default App;
+
 
 
 
