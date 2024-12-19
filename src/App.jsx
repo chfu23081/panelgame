@@ -72,15 +72,15 @@ const App = () => {
       <div>
         <label htmlFor="answer">犬種を選択しよう : </label>
         <select　id="answer"　value={selectedAnswer}　onChange={(e) => setSelectedAnswer(e.target.value)}>
-          <option value="">選択してね</option>
+          <option value=""> 選択してね </option>
           {choices.map((breed, index) => (
             <option key={index} value={breed}>
               {breed}
             </option>
           ))}
         </select>
-        <button onClick={checkAnswer}>答える</button>
-        <button onClick={resetGame}>リセット</button>
+        <button onClick={checkAnswer}> 答える </button>
+        <button onClick={resetGame}> リセット </button>
       </div>
       {isCorrect !== null && (<div>　{isCorrect ? (
             <p>すごい！正解！！！</p>) : (<p> 残念不正解！！正解は <strong>{correctBreed}</strong> でした！！！</p>
