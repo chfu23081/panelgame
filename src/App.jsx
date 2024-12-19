@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./style.css";
 const App = () => {
   const gridSize = 4; // グリッドのサイズ（4×4）
-  const maxReveals = 6; // 最大でめくれるパネルの数
+  const maxReveals = 4; // 最大でめくれるパネルの数
   const [imageURL, setImageURL] = useState(""); // 背景画像URL
   const [correctBreed, setCorrectBreed] = useState(""); // 正しい犬種
   const [allBreeds, setAllBreeds] = useState([]); // すべての犬種
-  const [choices, setChoices] = useState([]); // 選択肢
   const [revealedPanels, setRevealedPanels] = useState([]); // 表示されているパネルの管理
   const [selectedAnswer, setSelectedAnswer] = useState(""); // ユーザーの選択
   const [isCorrect, setIsCorrect] = useState(null); // 答えが正しいかどうかの状態
@@ -34,27 +33,10 @@ const App = () => {
       // URLから犬種を抽出 (例: "https://images.dog.ceo/breeds/hound-afghan/n02105412_811.jpg")
       const breed = imageUrl.split("/")[4];
       setCorrectBreed(breed); // 正解の犬種を設定
-      // 選択肢を作成
-      generateChoices(breed);
     } catch (error) {
       console.error("ランダムな犬画像の取得に失敗しました:", error);
     }
   };
-  // 選択肢を生成
-  const generateChoices = (correctBreed) => {
-    let options = [...allBreeds];
-    if (!options.includes(correctBreed)) {
-      options.push(correctBreed); // 正解の犬種をリストに追加
-    }
-    
-    // シャッフルして、重複しない4つの選択肢を選ぶ
-    const uniqueChoices = Array.from(new Set([correctBreed, ...options]))
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 4); // 必ず4つ選択する
-    
-    setChoices(uniqueChoices.sort(() => 0.5 - Math.random())); // 再シャッフルして設定
-  };
-  
   // 最初のレンダリング時に犬種リストと画像を取得
   useEffect(() => {
     fetchAllBreeds();
@@ -63,7 +45,7 @@ const App = () => {
   // パネルをクリックした時の処理
   const handlePanelClick = (index) => {
     if (revealedPanels.length < maxReveals && !revealedPanels.includes(index)) {
-      setRevealedPanels([...revealedPanels, index]);
+      setRevealedPanels([...revealedPanels, index]); // クリックしたパネルを表示リストに追加
     }
   };
   // 答えを確認する処理
@@ -99,7 +81,7 @@ const App = () => {
           onChange={(e) => setSelectedAnswer(e.target.value)}
         >
           <option value="">選択してください</option>
-          {choices.map((breed, index) => (
+          {allBreeds.map((breed, index) => (
             <option key={index} value={breed}>
               {breed}
             </option>
