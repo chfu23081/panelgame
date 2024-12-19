@@ -1,61 +1,76 @@
 import React, { useState, useEffect } from "react";
 import "./style.css";
+
 const App = () => {
   const gridSize = 4; // グリッドのサイズ（4×4）
-  const maxReveals = 4; // 最大でめくれるパネルの数
+  const maxReveals = 6; // 最大でめくれるパネルの数
   const [imageURL, setImageURL] = useState(""); // 背景画像URL
   const [correctBreed, setCorrectBreed] = useState(""); // 正しい犬種
   const [allBreeds, setAllBreeds] = useState([]); // すべての犬種
+  const [choices, setChoices] = useState([]); // 選択肢
   const [revealedPanels, setRevealedPanels] = useState([]); // 表示されているパネルの管理
   const [selectedAnswer, setSelectedAnswer] = useState(""); // ユーザーの選択
   const [isCorrect, setIsCorrect] = useState(null); // 答えが正しいかどうかの状態
-  // Dog CEO APIのエンドポイント
+
   const randomDogAPI = "https://dog.ceo/api/breeds/image/random";
   const allBreedsAPI = "https://dog.ceo/api/breeds/list/all";
-  // 犬種リストを取得
+
   const fetchAllBreeds = async () => {
     try {
       const response = await fetch(allBreedsAPI);
       const data = await response.json();
       const breeds = Object.keys(data.message);
-      setAllBreeds(breeds); // 犬種リストを設定
+      setAllBreeds(breeds.length > 0 ? breeds : ["labrador", "poodle", "bulldog", "beagle"]);
     } catch (error) {
       console.error("犬種リストの取得に失敗しました:", error);
+      setAllBreeds(["labrador", "poodle", "bulldog", "beagle"]);
     }
   };
-  // ランダムな犬画像を取得
+
   const fetchRandomDog = async () => {
     try {
       const response = await fetch(randomDogAPI);
       const data = await response.json();
       const imageUrl = data.message;
-      setImageURL(imageUrl); // 背景画像を設定
-      // URLから犬種を抽出 (例: "https://images.dog.ceo/breeds/hound-afghan/n02105412_811.jpg")
+      setImageURL(imageUrl);
       const breed = imageUrl.split("/")[4];
-      setCorrectBreed(breed); // 正解の犬種を設定
+      setCorrectBreed(breed);
+      generateChoices(breed);
     } catch (error) {
       console.error("ランダムな犬画像の取得に失敗しました:", error);
     }
   };
-  // 最初のレンダリング時に犬種リストと画像を取得
+
+  const generateChoices = (correctBreed) => {
+    let options = [...allBreeds];
+    if (!options.includes(correctBreed)) {
+      options.push(correctBreed);
+    }
+    const uniqueChoices = Array.from(new Set([correctBreed, ...options]))
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4);
+    setChoices(uniqueChoices.sort(() => 0.5 - Math.random()));
+  };
+
   useEffect(() => {
     fetchAllBreeds();
     fetchRandomDog();
   }, []);
-  // パネルをクリックした時の処理
+
   const handlePanelClick = (index) => {
     if (revealedPanels.length < maxReveals && !revealedPanels.includes(index)) {
-      setRevealedPanels([...revealedPanels, index]); // クリックしたパネルを表示リストに追加
+      setRevealedPanels([...revealedPanels, index]);
     }
   };
-  // 答えを確認する処理
+
   const checkAnswer = () => {
     if (selectedAnswer === correctBreed) {
-      setIsCorrect(true); // 正解の場合
+      setIsCorrect(true);
     } else {
-      setIsCorrect(false); // 不正解の場合
+      setIsCorrect(false);
     }
   };
+
   return (
     <div id="game-container">
       <h1>犬種当てゲーム</h1>
@@ -81,7 +96,7 @@ const App = () => {
           onChange={(e) => setSelectedAnswer(e.target.value)}
         >
           <option value="">選択してください</option>
-          {allBreeds.map((breed, index) => (
+          {choices.map((breed, index) => (
             <option key={index} value={breed}>
               {breed}
             </option>
@@ -104,7 +119,9 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
+
 
 
 
