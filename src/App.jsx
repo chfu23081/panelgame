@@ -90,13 +90,22 @@ const App = () => {
         <button onClick={checkAnswer}>答える</button>
       </div>
       {isCorrect !== null && (
-        <p>{isCorrect ? "正解です！" : "不正解です。もう一度挑戦してね！"}</p>
+        <div>
+          {isCorrect ? (
+            <p>正解です！</p>
+          ) : (
+            <p>
+              不正解です。正解は <strong>{correctBreed}</strong> でした。
+            </p>
+          )}
+        </div>
       )}
       <p>めくれるパネルは最大 {maxReveals} 枚です。</p>
     </div>
   );
 };
 export default App;
+
 
 
 
