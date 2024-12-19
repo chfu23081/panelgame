@@ -70,7 +70,7 @@ const App = () => {
         </div>
       </div>
       <div>
-        <label htmlFor="answer">犬種を選択しよう:</label>
+        <label htmlFor="answer">犬種を選択しよう : </label>
         <select　id="answer"　value={selectedAnswer}　onChange={(e) => setSelectedAnswer(e.target.value)}>
           <option value="">選択してね</option>
           {choices.map((breed, index) => (
