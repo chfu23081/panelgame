@@ -2,74 +2,84 @@ import React, { useState, useEffect } from "react";
 import "./style.css";
 
 const App = () => {
-  const gridSize = 4; // グリッドのサイズ（4×4）
-  const maxReveals = 6; // 最大でめくれるパネルの数
-  const [imageURL, setImageURL] = useState(""); // 背景画像URL
-  const [correctBreed, setCorrectBreed] = useState(""); // 正しい犬種
-  const [allBreeds, setAllBreeds] = useState([]); // すべての犬種
-  const [choices, setChoices] = useState([]); // 選択肢
-  const [revealedPanels, setRevealedPanels] = useState([]); // 表示されているパネルの管理
-  const [selectedAnswer, setSelectedAnswer] = useState(""); // ユーザーの選択
-  const [isCorrect, setIsCorrect] = useState(null); // 答えが正しいかどうかの状態
+  const gridSize = 4; // Grid size (4x4)
+  const maxReveals = 6; // Maximum panels that can be revealed
+  const [imageURL, setImageURL] = useState(""); // Background image URL
+  const [correctBreed, setCorrectBreed] = useState(""); // Correct breed
+  const [allBreeds, setAllBreeds] = useState([]); // All available breeds
+  const [choices, setChoices] = useState([]); // Options for user
+  const [revealedPanels, setRevealedPanels] = useState([]); // Revealed panels
+  const [selectedAnswer, setSelectedAnswer] = useState(""); // User's selected answer
+  const [isCorrect, setIsCorrect] = useState(null); // Whether the answer is correct
 
+  // API Endpoints
   const randomDogAPI = "https://dog.ceo/api/breeds/image/random";
   const allBreedsAPI = "https://dog.ceo/api/breeds/list/all";
 
+  // Fetch all breeds
   const fetchAllBreeds = async () => {
     try {
       const response = await fetch(allBreedsAPI);
       const data = await response.json();
-      const breeds = Object.keys(data.message);
-      setAllBreeds(breeds.length > 0 ? breeds : ["labrador", "poodle", "bulldog", "beagle"]);
+      setAllBreeds(Object.keys(data.message));
     } catch (error) {
-      console.error("犬種リストの取得に失敗しました:", error);
-      setAllBreeds(["labrador", "poodle", "bulldog", "beagle"]);
+      console.error("Failed to fetch breed list:", error);
     }
   };
 
+  // Fetch random dog image
   const fetchRandomDog = async () => {
     try {
       const response = await fetch(randomDogAPI);
       const data = await response.json();
       const imageUrl = data.message;
       setImageURL(imageUrl);
+
+      // Extract breed from image URL
       const breed = imageUrl.split("/")[4];
       setCorrectBreed(breed);
+
+      // Generate options
       generateChoices(breed);
     } catch (error) {
-      console.error("ランダムな犬画像の取得に失敗しました:", error);
+      console.error("Failed to fetch random dog image:", error);
     }
   };
 
+  // Generate choices including the correct breed
   const generateChoices = (correctBreed) => {
-    let options = [...allBreeds];
-    if (!options.includes(correctBreed)) {
-      options.push(correctBreed);
-    }
-    const uniqueChoices = Array.from(new Set([correctBreed, ...options]))
+    const shuffledBreeds = [...allBreeds]
+      .filter((breed) => breed !== correctBreed)
       .sort(() => 0.5 - Math.random())
-      .slice(0, 4);
-    setChoices(uniqueChoices.sort(() => 0.5 - Math.random()));
+      .slice(0, 3);
+    setChoices([correctBreed, ...shuffledBreeds].sort(() => 0.5 - Math.random()));
   };
 
-  useEffect(() => {
-    fetchAllBreeds();
-    fetchRandomDog();
-  }, []);
-
+  // Handle panel click
   const handlePanelClick = (index) => {
     if (revealedPanels.length < maxReveals && !revealedPanels.includes(index)) {
       setRevealedPanels([...revealedPanels, index]);
     }
   };
 
+  // Check the answer
   const checkAnswer = () => {
-    if (selectedAnswer === correctBreed) {
-      setIsCorrect(true);
-    } else {
-      setIsCorrect(false);
-    }
+    setIsCorrect(selectedAnswer === correctBreed);
   };
+
+  // Reset the game
+  const resetGame = () => {
+    setRevealedPanels([]);
+    setSelectedAnswer("");
+    setIsCorrect(null);
+    fetchRandomDog();
+  };
+
+  // Fetch breeds and a random dog image on initial render
+  useEffect(() => {
+    fetchAllBreeds();
+    fetchRandomDog();
+  }, []);
 
   return (
     <div id="game-container">
@@ -103,6 +113,7 @@ const App = () => {
           ))}
         </select>
         <button onClick={checkAnswer}>答える</button>
+        <button onClick={resetGame}>リセット</button>
       </div>
       {isCorrect !== null && (
         <div>
