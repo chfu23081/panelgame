@@ -4,22 +4,43 @@ const App = () => {
   const gridSize = 4; // グリッドのサイズ（4×4）
   const maxReveals = 4; // 最大でめくれるパネルの数
   const [imageURL, setImageURL] = useState(""); // 背景画像URL
+  const [correctBreed, setCorrectBreed] = useState(""); // 正しい犬種
+  const [allBreeds, setAllBreeds] = useState([]); // すべての犬種
   const [revealedPanels, setRevealedPanels] = useState([]); // 表示されているパネルの管理
-  const [guess, setGuess] = useState(""); // ユーザーの答え
+  const [selectedAnswer, setSelectedAnswer] = useState(""); // ユーザーの選択
   const [isCorrect, setIsCorrect] = useState(null); // 答えが正しいかどうかの状態
-  // Dog APIから画像を取得する
-  const fetchImage = async () => {
+  // Dog CEO APIのエンドポイント
+  const randomDogAPI = "https://dog.ceo/api/breeds/image/random";
+  const allBreedsAPI = "https://dog.ceo/api/breeds/list/all";
+  // 犬種リストを取得
+  const fetchAllBreeds = async () => {
     try {
-      const response = await fetch("https://dog.ceo/api/breeds/image/random");
+      const response = await fetch(allBreedsAPI);
       const data = await response.json();
-      setImageURL(data.message); // 背景画像を設定
+      const breeds = Object.keys(data.message);
+      setAllBreeds(breeds); // 犬種リストを設定
     } catch (error) {
-      console.error("画像の取得に失敗しました:", error);
+      console.error("犬種リストの取得に失敗しました:", error);
     }
   };
-  // 最初のレンダリング時に画像を取得
+  // ランダムな犬画像を取得
+  const fetchRandomDog = async () => {
+    try {
+      const response = await fetch(randomDogAPI);
+      const data = await response.json();
+      const imageUrl = data.message;
+      setImageURL(imageUrl); // 背景画像を設定
+      // URLから犬種を抽出 (例: "https://images.dog.ceo/breeds/hound-afghan/n02105412_811.jpg")
+      const breed = imageUrl.split("/")[4];
+      setCorrectBreed(breed); // 正解の犬種を設定
+    } catch (error) {
+      console.error("ランダムな犬画像の取得に失敗しました:", error);
+    }
+  };
+  // 最初のレンダリング時に犬種リストと画像を取得
   useEffect(() => {
-    fetchImage();
+    fetchAllBreeds();
+    fetchRandomDog();
   }, []);
   // パネルをクリックした時の処理
   const handlePanelClick = (index) => {
@@ -29,7 +50,7 @@ const App = () => {
   };
   // 答えを確認する処理
   const checkAnswer = () => {
-    if (guess.toLowerCase().includes("dog")) {
+    if (selectedAnswer === correctBreed) {
       setIsCorrect(true); // 正解の場合
     } else {
       setIsCorrect(false); // 不正解の場合
@@ -37,7 +58,7 @@ const App = () => {
   };
   return (
     <div id="game-container">
-      <h1>4x4 Image Reveal Game</h1>
+      <h1>犬種当てゲーム</h1>
       <div
         className="image-background"
         style={{ backgroundImage: `url(${imageURL})` }}
@@ -53,12 +74,19 @@ const App = () => {
         </div>
       </div>
       <div>
-        <input
-          type="text"
-          placeholder="画像の名前を入力 (dog など)"
-          value={guess}
-          onChange={(e) => setGuess(e.target.value)}
-        />
+        <label htmlFor="answer">犬種を選択してください:</label>
+        <select
+          id="answer"
+          value={selectedAnswer}
+          onChange={(e) => setSelectedAnswer(e.target.value)}
+        >
+          <option value="">選択してください</option>
+          {allBreeds.map((breed, index) => (
+            <option key={index} value={breed}>
+              {breed}
+            </option>
+          ))}
+        </select>
         <button onClick={checkAnswer}>答える</button>
       </div>
       {isCorrect !== null && (
