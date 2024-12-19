@@ -70,9 +70,9 @@ const App = () => {
         </div>
       </div>
       <div>
-        <label htmlFor="answer">犬種を選択してください:</label>
+        <label htmlFor="answer">犬種を選択しよう:</label>
         <select　id="answer"　value={selectedAnswer}　onChange={(e) => setSelectedAnswer(e.target.value)}>
-          <option value="">選択してください</option>
+          <option value="">選択してね</option>
           {choices.map((breed, index) => (
             <option key={index} value={breed}>
               {breed}
@@ -83,11 +83,11 @@ const App = () => {
         <button onClick={resetGame}>リセット</button>
       </div>
       {isCorrect !== null && (<div>　{isCorrect ? (
-            <p>正解です！</p>) : (<p> 不正解です。正解は <strong>{correctBreed}</strong> でした。</p>
+            <p>すごい！正解！！！</p>) : (<p> 残念不正解！！正解は <strong>{correctBreed}</strong> でした！！！</p>
           )}
         </div>
       )}
-      <p>めくれるパネルは最大 {maxReveals} 枚です。</p>
+      <p>めくれるパネルは{maxReveals} 枚までだよ</p>
     </div>
   );
 };

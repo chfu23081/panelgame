@@ -14,7 +14,7 @@ body {
     position: relative;
     width: 400px;
     height: 400px;
-    background-size: cover; /* 背景画像を全体に拡大 */
+    background-size: cover; 
     background-position: center;
     margin: 0 auto 20px;
   }
@@ -30,12 +30,12 @@ body {
     left: 0;
   }
   .panel {
-    background-color: #ccc; /* パネルのデフォルト色 */
+    background-color: #ccc; 
     border: 1px solid #aaa;
     cursor: pointer;
   }
   .panel.revealed {
-    background-color: transparent; /* 表示されたパネルを透明にする */
+    background-color: transparent; 
   }
     
       
