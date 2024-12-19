@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./style.css";
 const App = () => {
   const gridSize = 4; // グリッドのサイズ（4×4）
-  const maxReveals = 4; // 最大でめくれるパネルの数
+  const maxReveals = 6; // 最大でめくれるパネルの数
   const [imageURL, setImageURL] = useState(""); // 背景画像URL
   const [correctBreed, setCorrectBreed] = useState(""); // 正しい犬種
   const [allBreeds, setAllBreeds] = useState([]); // すべての犬種
