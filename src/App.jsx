@@ -38,7 +38,7 @@ const App = () => {
     setChoices([correct, ...shuffledBreeds].sort(() => 0.5 - Math.random()));
   };
   const handlePanelClick = (index) => {
-    if (Panels.length < maxReveals && !Panels.includes(index)) {
+    if (Panels.length < max && !Panels.includes(index)) {
       setRevealedPanels([...Panels, index]);
     }
   };
@@ -71,7 +71,7 @@ const App = () => {
         <label htmlFor="answer">犬種を選択しよう : </label>
         <select id="answer" value={Answer} onChange={(e) => setSelectedAnswer(e.target.value)}>
           <option value=""> 選択してね </option>
-          {choices.map((breed, index) => (
+          {choice.map((breed, index) => (
             <option key={index} value={breed}>
               {breed}
             </option>
