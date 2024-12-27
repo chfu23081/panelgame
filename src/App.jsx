@@ -80,7 +80,7 @@ const App = () => {
         <button onClick={checkAnswer}> 答える </button>
         <button onClick={resetGame}> リセット </button>
       </div>
-        {isCorrect !== null && (<div> {isCorrect ? (<p>すごい！正解！！！</p>) : (<p> 残念不正解！！正解は <strong>{correctBreed}</strong> でした！！！</p>)}
+        {isCorrect !== null && (<div> {isCorrect ? (<p>すごい！正解！！！</p>) : (<p> 残念不正解！！正解は <strong>{correct}</strong> でした！！！</p>)}
       </div>
       )}
       <p>めくれるパネルは{max}枚までだよ</p>
